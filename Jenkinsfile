@@ -87,7 +87,7 @@ pipeline {
         }
     }
 
-    post {
+        post {
         always {
             // 儲存測試結果
             archiveArtifacts artifacts: 'results/*', fingerprint: true
@@ -97,10 +97,12 @@ pipeline {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
                 // 直接發送成功消息到 Telegram (不使用 CSRF Token)
+                def encodedMessage = URLEncoder.encode(message, "UTF-8")
+                
                 bat """
                     curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
                     -d chat_id=${TELEGRAM_CHAT_ID} \
-                    -d text='${URLEncoder.encode(message, "UTF-8")}'
+                    -d text="${encodedMessage}"
                 """
             }
         }
@@ -109,12 +111,15 @@ pipeline {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
                 // 直接發送失敗消息到 Telegram (不使用 CSRF Token)
+                def encodedMessage = URLEncoder.encode(message, "UTF-8")
+                
                 bat """
                     curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
                     -d chat_id=${TELEGRAM_CHAT_ID} \
-                    -d text='${URLEncoder.encode(message, "UTF-8")}'
+                    -d text="${encodedMessage}"
                 """
             }
         }
     }
+
 }
