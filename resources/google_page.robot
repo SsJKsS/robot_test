@@ -17,7 +17,7 @@ ${SEARCH_BUTTON}    xpath=(//input[@name="btnK"])[1]
     Input Text    ${SEARCH_BOX}    ${keyword}
     Sleep    1s   # 避免 Google 動態搜尋干擾
     Press Keys    ${SEARCH_BOX}    ENTER
-    Wait Until Element Is Visible    xpath=//div[@id="search"]    5s
+    Wait Until Element Is Visible    xpath=//div[@id="search"]    10s
 
 關閉瀏覽器
     Close Browser
