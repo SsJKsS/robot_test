@@ -112,7 +112,7 @@ pipeline {
                 bat """
                     curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
                     -d chat_id=${TELEGRAM_CHAT_ID} \
-                    -d text='${message}'
+                    -d text='${URLEncoder.encode(message, "UTF-8")}'
                 """
             }
         }
