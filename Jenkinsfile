@@ -87,7 +87,7 @@ pipeline {
         }
     }
 
-        post {
+            post {
         always {
             // 儲存測試結果
             archiveArtifacts artifacts: 'results/*', fingerprint: true
@@ -96,13 +96,17 @@ pipeline {
             script {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 直接發送成功消息到 Telegram (不使用 CSRF Token)
+                // 使用 Powershell 發送 UTF-8 編碼消息
                 def encodedMessage = URLEncoder.encode(message, "UTF-8")
                 
-                bat """
-                    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-                    -d chat_id=${TELEGRAM_CHAT_ID} \
-                    -d text="${encodedMessage}"
+                powershell """
+                    $message = '${encodedMessage}'
+                    $url = 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage'
+                    $chatId = '${TELEGRAM_CHAT_ID}'
+                    Invoke-RestMethod -Uri \$url -Method Post -Body @{
+                        chat_id = \$chatId
+                        text = \$message
+                    }
                 """
             }
         }
@@ -110,13 +114,17 @@ pipeline {
             script {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 直接發送失敗消息到 Telegram (不使用 CSRF Token)
+                // 使用 Powershell 發送 UTF-8 編碼消息
                 def encodedMessage = URLEncoder.encode(message, "UTF-8")
                 
-                bat """
-                    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-                    -d chat_id=${TELEGRAM_CHAT_ID} \
-                    -d text="${encodedMessage}"
+                powershell """
+                    $message = '${encodedMessage}'
+                    $url = 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage'
+                    $chatId = '${TELEGRAM_CHAT_ID}'
+                    Invoke-RestMethod -Uri \$url -Method Post -Body @{
+                        chat_id = \$chatId
+                        text = \$message
+                    }
                 """
             }
         }
