@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        PYTHON_ENV = "${WORKSPACE}/venv"
-        TELEGRAM_BOT_TOKEN = "7597395246:AAEwY29V9_Vcdi-I4Odu9pNGRQfkK3yVvQY"
-        TELEGRAM_CHAT_ID = "7401334685"
+        PYTHON_VENV = "${WORKSPACE}/venv"
+        TELEGRAM_BOT_TOKEN = credentials('TELEGRAM_BOT_TOKEN')
+        TELEGRAM_CHAT_ID = credentials('TELEGRAM_CHAT_ID')
+        REPO_URL = 'https://github.com/SsJKsS/robot_test.git'
     }
 
     stages {
@@ -14,18 +15,19 @@ pipeline {
                     checkout scm: [
                         $class: 'GitSCM',
                         branches: [[name: 'refs/heads/main']],
-                        userRemoteConfigs: [[url: 'https://github.com/SsJKsS/robot_test.git']]
+                        userRemoteConfigs: [[url: REPO_URL]]
                     ]
                 }
             }
         }
 
-        stage('Setup Python and Create Virtual Environment') {
+        stage('Setup Python Virtual Environment') {
             steps {
                 script {
-                    bat 'python --version'
-                    bat 'echo %PYTHON_ENV%'
-                    bat 'python -m venv %PYTHON_ENV%'
+                    bat """
+                        python --version
+                        python -m venv ${PYTHON_VENV}
+                    """
                 }
             }
         }
@@ -34,9 +36,8 @@ pipeline {
             steps {
                 script {
                     bat """
-                        call %PYTHON_ENV%\\Scripts\\activate
+                        call ${PYTHON_VENV}\\Scripts\\activate
                         python -m pip install --upgrade pip
-                        pip --version
                     """
                 }
             }
@@ -46,8 +47,8 @@ pipeline {
             steps {
                 script {
                     bat """
-                        call %PYTHON_ENV%\\Scripts\\activate
-                        pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager
+                        call ${PYTHON_VENV}\\Scripts\\activate
+                        pip install -r requirements.txt
                     """
                 }
             }
@@ -56,7 +57,10 @@ pipeline {
         stage('Run Robot Tests') {
             steps {
                 script {
-                    bat 'call %PYTHON_ENV%\\Scripts\\activate && robot -d results .'
+                    bat """
+                        call ${PYTHON_VENV}\\Scripts\\activate
+                        robot -d results .
+                    """
                 }
             }
         }
@@ -78,41 +82,33 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'results/*', fingerprint: true
         }
+
         success {
             script {
-                def buildNumber = env.BUILD_NUMBER
-                def buildStatus = "SUCCESS"
-                def reportUrl = "${env.BUILD_URL}artifact/results/report.html"
-                def message = "✅ Test Pass!\n📌 Build Number: ${buildNumber}\n📜 Status: ${buildStatus}\n🔗 [Robot Report](${reportUrl})"
-
-                bat """
-                    chcp 65001 > NUL
-                    set PYTHONIOENCODING=utf-8
-                    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" ^
-                    -d chat_id="${TELEGRAM_CHAT_ID}" ^
-                    -d parse_mode="Markdown" ^
-                    -d text="${message}" > curl_output.txt
-                    type curl_output.txt || echo "Failed to send Telegram message."
-                """
+                sendTelegramNotification("✅ 測試通過！", "SUCCESS")
             }
         }
+
         failure {
             script {
-                def buildNumber = env.BUILD_NUMBER
-                def buildStatus = "FAILURE"
-                def reportUrl = "${env.BUILD_URL}artifact/results/report.html"
-                def message = "❌ Test Fail\n📌 Build Number: ${buildNumber}\n📜 Status: ${buildStatus}\n🔗 [Robot Report](${reportUrl})"
-
-                bat """
-                    chcp 65001 > NUL
-                    set PYTHONIOENCODING=utf-8
-                    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" ^
-                    -d chat_id="${TELEGRAM_CHAT_ID}" ^
-                    -d parse_mode="Markdown" ^
-                    -d text="${message}" > curl_output.txt
-                    type curl_output.txt || echo "Failed to send Telegram message."
-                """
+                sendTelegramNotification("❌ 測試失敗", "FAILURE")
             }
         }
     }
+}
+
+def sendTelegramNotification(String statusMessage, String status) {
+    def buildNumber = env.BUILD_NUMBER
+    def reportUrl = "${env.BUILD_URL}artifact/results/report.html"
+    def message = "${statusMessage}\n📌 建置編號: ${buildNumber}\n📜 狀態: ${status}\n🔗 [測試報告](${reportUrl})"
+
+    bat """
+        chcp 65001 > NUL
+        set PYTHONIOENCODING=utf-8
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" ^
+        -d chat_id="${TELEGRAM_CHAT_ID}" ^
+        -d parse_mode="Markdown" ^
+        -d text="${message}" > curl_output.txt
+        type curl_output.txt || echo "無法發送 Telegram 訊息"
+    """
 }
