@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.2.2 (Python 3.13.2 on win32)" generated="2025-03-16T11:40:02.384847" rpa="false" schemaversion="5">
+<suite id="s1" name="Search Google" source="C:\Users\s2332\robot_test\search_google.robot">
+<test id="s1-t1" name="Search Dog On Google" line="5">
+<kw name="打開谷哥" owner="google_page">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-03-16T11:40:03.232826" level="INFO">Opening browser 'chrome' to base url 'https://www.google.com'.</msg>
+<arg>${URL}</arg>
+<arg>chrome</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-03-16T11:40:03.232695" elapsed="3.387402"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-03-16T11:40:06.620238" elapsed="0.028170"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>${SEARCH_BOX}</arg>
+<arg>5s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-03-16T11:40:06.648542" elapsed="0.041809"/>
+</kw>
+<status status="PASS" start="2025-03-16T11:40:03.232322" elapsed="3.458114"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-03-16T11:40:08.691032" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-03-16T11:40:06.690638" elapsed="2.000482"/>
+</kw>
+<kw name="搜尋關鍵字" owner="google_page">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-03-16T11:40:08.691793" level="INFO">Typing text '狗' into text field 'xpath=//textarea[@name="q"]'.</msg>
+<arg>${SEARCH_BOX}</arg>
+<arg>${keyword}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-03-16T11:40:08.691657" elapsed="0.031036"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-03-16T11:40:09.723438" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-03-16T11:40:08.722809" elapsed="1.000709"/>
+</kw>
+<kw name="Press Keys" owner="SeleniumLibrary">
+<msg time="2025-03-16T11:40:09.723887" level="INFO">Sending key(s) ('ENTER',) to xpath=//textarea[@name="q"] element.</msg>
+<msg time="2025-03-16T11:40:10.003607" level="INFO">Pressing special key ENTER to element.</msg>
+<msg time="2025-03-16T11:40:10.003667" level="INFO">Releasing special key ENTER.</msg>
+<arg>${SEARCH_BOX}</arg>
+<arg>ENTER</arg>
+<doc>Simulates the user pressing key(s) to an element or on the active browser.</doc>
+<status status="PASS" start="2025-03-16T11:40:09.723623" elapsed="0.942048"/>
+</kw>
+<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
+<msg time="2025-03-16T11:40:12.750655" level="WARN">Keyword 'Capture Page Screenshot' could not be run on failure: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=134.0.6998.88)
+Stacktrace:
+	GetHandleVerifier [0x00007FF785F8FE45+26629]
+	(No symbol) [0x00007FF785EF6010]
+	(No symbol) [0x00007FF785D8931A]
+	(No symbol) [0x00007FF785D61753]
+	(No symbol) [0x00007FF785E0F6BE]
+	(No symbol) [0x00007FF785E2FA55]
+	(No symbol) [0x00007FF785E07883]
+	(No symbol) [0x00007FF785DD0550]
+	(No symbol) [0x00007FF785DD1803]
+	GetHandleVerifier [0x00007FF7862E72BD+3529853]
+	GetHandleVerifier [0x00007FF7862FDA22+3621858]
+	GetHandleVerifier [0x00007FF7862F24D3+3575443]
+	GetHandleVerifier [0x00007FF78605B77A+860474]
+	(No symbol) [0x00007FF785F0088F]
+	(No symbol) [0x00007FF785EFCBC4]
+	(No symbol) [0x00007FF785EFCD66]
+	(No symbol) [0x00007FF785EEC2C9]
+	BaseThreadInitThunk [0x00007FFACD01259D+29]
+	RtlUserThreadStart [0x00007FFACF12AF38+40]
+</msg>
+<msg time="2025-03-16T11:40:12.752672" level="FAIL">NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=134.0.6998.88)
+Stacktrace:
+	GetHandleVerifier [0x00007FF785F8FE45+26629]
+	(No symbol) [0x00007FF785EF6010]
+	(No symbol) [0x00007FF785D8931A]
+	(No symbol) [0x00007FF785D61753]
+	(No symbol) [0x00007FF785E0F6BE]
+	(No symbol) [0x00007FF785E2FA55]
+	(No symbol) [0x00007FF785E07883]
+	(No symbol) [0x00007FF785DD0550]
+	(No symbol) [0x00007FF785DD1803]
+	GetHandleVerifier [0x00007FF7862E72BD+3529853]
+	GetHandleVerifier [0x00007FF7862FDA22+3621858]
+	GetHandleVerifier [0x00007FF7862F24D3+3575443]
+	GetHandleVerifier [0x00007FF78605B77A+860474]
+	(No symbol) [0x00007FF785F0088F]
+	(No symbol) [0x00007FF785EFCBC4]
+	(No symbol) [0x00007FF785EFCD66]
+	(No symbol) [0x00007FF785EEC2C9]
+	BaseThreadInitThunk [0x00007FFACD01259D+29]
+	RtlUserThreadStart [0x00007FFACF12AF38+40]
+</msg>
+<arg>xpath=//div[@id="search"]</arg>
+<arg>5s</arg>
+<doc>Waits until the element ``locator`` appears on the current page.</doc>
+<status status="FAIL" start="2025-03-16T11:40:10.665881" elapsed="2.091541">NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=134.0.6998.88)
+Stacktrace:
+	GetHandleVerifier [0x00007FF785F8FE45+26629]
+	(No symbol) [0x00007FF785EF6010]
+	(No symbol) [0x00007FF785D8931A]
+	(No symbol) [0x00007FF785D61753]
+	(No symbol) [0x00007FF785E0F6BE]
+	(No symbol) [0x00007FF785E2FA55]
+	(No symbol) [0x00007FF785E07883]
+	(No symbol) [0x00007FF785DD0550]
+	(No symbol) [0x00007FF785DD1803]
+	GetHandleVerifier [0x00007FF7862E72BD+3529853]
+	GetHandleVerifier [0x00007FF7862FDA22+3621858]
+	GetHandleVerifier [0x00007FF7862F24D3+3575443]
+	GetHandleVerifier [0x00007FF78605B77A+860474]
+	(No symbol) [0x00007FF785F0088F]
+	(No symbol) [0x00007FF785EFCBC4]
+	(No symbol) [0x00007FF785EFCD66]
+	(No symbol) [0x00007FF785EEC2C9]
+	BaseThreadInitThunk [0x00007FFACD01259D+29]
+	RtlUserThreadStart [0x00007FFACF12AF38+40]
+</status>
+</kw>
+<arg>狗</arg>
+<status status="FAIL" start="2025-03-16T11:40:08.691434" elapsed="4.066192">NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=134.0.6998.88)
+Stacktrace:
+	GetHandleVerifier [0x00007FF785F8FE45+26629]
+	(No symbol) [0x00007FF785EF6010]
+	(No symbol) [0x00007FF785D8931A]
+	(No symbol) [0x00007FF785D61753]
+	(No symbol) [0x00007FF785E0F6BE]
+	(No symbol) [0x00007FF785E2FA55]
+	(No symbol) [0x00007FF785E07883]
+	(No symbol) [0x00007FF785DD0550]
+	(No symbol) [0x00007FF785DD1803]
+	GetHandleVerifier [0x00007FF7862E72BD+3529853]
+	GetHandleVerifier [0x00007FF7862FDA22+3621858]
+	GetHandleVerifier [0x00007FF7862F24D3+3575443]
+	GetHandleVerifier [0x00007FF78605B77A+860474]
+	(No symbol) [0x00007FF785F0088F]
+	(No symbol) [0x00007FF785EFCBC4]
+	(No symbol) [0x00007FF785EFCD66]
+	(No symbol) [0x00007FF785EEC2C9]
+	BaseThreadInitThunk [0x00007FFACD01259D+29]
+	RtlUserThreadStart [0x00007FFACF12AF38+40]
+</status>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="NOT RUN" start="2025-03-16T11:40:12.757882" elapsed="0.000041"/>
+</kw>
+<kw name="關閉瀏覽器" owner="google_page">
+<status status="NOT RUN" start="2025-03-16T11:40:12.758200" elapsed="0.000098"/>
+</kw>
+<status status="FAIL" start="2025-03-16T11:40:03.231931" elapsed="9.526620">NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=134.0.6998.88)
+Stacktrace:
+	GetHandleVerifier [0x00007FF785F8FE45+26629]
+	(No symbol) [0x00007FF785EF6010]
+	(No symbol) [0x00007FF785D8931A]
+	(No symbol) [0x00007FF785D61753]
+	(No symbol) [0x00007FF785E0F6BE]
+	(No symbol) [0x00007FF785E2FA55]
+	(No symbol) [0x00007FF785E07883]
+	(No symbol) [0x00007FF785DD0550]
+	(No symbol) [0x00007FF785DD1803]
+	GetHandleVerifier [0x00007FF7862E72BD+3529853]
+	GetHandleVerifier [0x00007FF7862FDA22+3621858]
+	GetHandleVerifier [0x00007FF7862F24D3+3575443]
+	GetHandleVerifier [0x00007FF78605B77A+860474]
+	(No symbol) [0x00007FF785F0088F]
+	(No symbol) [0x00007FF785EFCBC4]
+	(No symbol) [0x00007FF785EFCD66]
+	(No symbol) [0x00007FF785EEC2C9]
+	BaseThreadInitThunk [0x00007FFACD01259D+29]
+	RtlUserThreadStart [0x00007FFACF12AF38+40]
+</status>
+</test>
+<status status="FAIL" start="2025-03-16T11:40:02.385500" elapsed="10.375382"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Search Google" id="s1" pass="0" fail="1" skip="0">Search Google</stat>
+</suite>
+</statistics>
+<errors>
+<msg time="2025-03-16T11:40:12.750655" level="WARN">Keyword 'Capture Page Screenshot' could not be run on failure: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=134.0.6998.88)
+Stacktrace:
+	GetHandleVerifier [0x00007FF785F8FE45+26629]
+	(No symbol) [0x00007FF785EF6010]
+	(No symbol) [0x00007FF785D8931A]
+	(No symbol) [0x00007FF785D61753]
+	(No symbol) [0x00007FF785E0F6BE]
+	(No symbol) [0x00007FF785E2FA55]
+	(No symbol) [0x00007FF785E07883]
+	(No symbol) [0x00007FF785DD0550]
+	(No symbol) [0x00007FF785DD1803]
+	GetHandleVerifier [0x00007FF7862E72BD+3529853]
+	GetHandleVerifier [0x00007FF7862FDA22+3621858]
+	GetHandleVerifier [0x00007FF7862F24D3+3575443]
+	GetHandleVerifier [0x00007FF78605B77A+860474]
+	(No symbol) [0x00007FF785F0088F]
+	(No symbol) [0x00007FF785EFCBC4]
+	(No symbol) [0x00007FF785EFCD66]
+	(No symbol) [0x00007FF785EEC2C9]
+	BaseThreadInitThunk [0x00007FFACD01259D+29]
+	RtlUserThreadStart [0x00007FFACF12AF38+40]
+</msg>
+</errors>
+</robot>
