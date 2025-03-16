@@ -96,7 +96,7 @@ pipeline {
             script {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 直接發送成功消息到 Telegram (不使用 CSRF Token)
+                // 直接發送成功消息到 Telegram (不使用 CSRF)
                 bat """
                     curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
                     -d chat_id=${TELEGRAM_CHAT_ID} \
@@ -108,7 +108,7 @@ pipeline {
             script {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 直接發送失敗消息到 Telegram (不使用 CSRF Token)
+                // 直接發送失敗消息到 Telegram (不使用 CSRF)
                 bat """
                     curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
                     -d chat_id=${TELEGRAM_CHAT_ID} \
