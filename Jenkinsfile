@@ -96,13 +96,11 @@ pipeline {
             script {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 使用 curl 發送 UTF-8 編碼消息
-                def encodedMessage = URLEncoder.encode(message, "UTF-8")
-
+                // 直接發送訊息到 Telegram，不再進行 URL 編碼
                 bat """
                     curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage ^
                     -d chat_id=${TELEGRAM_CHAT_ID} ^
-                    -d text="${encodedMessage}"
+                    -d text="${message}"
                 """
             }
         }
@@ -110,17 +108,14 @@ pipeline {
             script {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 使用 curl 發送 UTF-8 編碼消息
-                def encodedMessage = URLEncoder.encode(message, "UTF-8")
-
+                // 直接發送訊息到 Telegram，不再進行 URL 編碼
                 bat """
                     curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage ^
                     -d chat_id=${TELEGRAM_CHAT_ID} ^
-                    -d text="${encodedMessage}"
+                    -d text="${message}"
                 """
             }
         }
     }
-
-
+    
 }
