@@ -96,63 +96,23 @@ pipeline {
             script {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 取得 Jenkins CSRF token
-                def crumb = bat(script: "curl -s -u ${env.JENKINS_USER}:${env.JENKINS_API_TOKEN} ${env.JENKINS_URL}/crumbIssuer/api/xml", returnStdout: true).trim()
-                
-                // 檢查是否分割成功，並安全地獲取 csrfToken
-                def csrfToken = ''
-                def crumbParts = crumb.split('<crumb>')
-                if (crumbParts.length > 1) {
-                    def tokenParts = crumbParts[1].split('</crumb>')
-                    if (tokenParts.length > 0) {
-                        csrfToken = tokenParts[0]
-                    }
-                }
-                
-                // 確保 csrfToken 非空
-                if (csrfToken) {
-                    // 發送成功消息到 Telegram
-                    bat """
-                        curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-                        -d chat_id=${TELEGRAM_CHAT_ID} \
-                        -d text='${message}' \
-                        -H 'Jenkins-Crumb:${csrfToken}'
-                    """
-                } else {
-                    echo "未能獲取 CSRF token，無法發送消息到 Telegram"
-                }
+                // 直接發送成功消息到 Telegram (不使用 CSRF Token)
+                bat """
+                    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+                    -d chat_id=${TELEGRAM_CHAT_ID} \
+                    -d text='${message}'
+                """
             }
         }
         failure {
             script {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
-                // 取得 Jenkins CSRF token
-                def crumb = bat(script: "curl -s -u ${env.JENKINS_USER}:${env.JENKINS_API_TOKEN} ${env.JENKINS_URL}/crumbIssuer/api/xml", returnStdout: true).trim()
-                
-                // 檢查是否分割成功，並安全地獲取 csrfToken
-                def csrfToken = ''
-                def crumbParts = crumb.split('<crumb>')
-                if (crumbParts.length > 1) {
-                    def tokenParts = crumbParts[1].split('</crumb>')
-                    if (tokenParts.length > 0) {
-                        csrfToken = tokenParts[0]
-                    }
-                }
-                
-                // 確保 csrfToken 非空
-                if (csrfToken) {
-                    // 發送失敗消息到 Telegram
-                    bat """
-                        curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-                        -d chat_id=${TELEGRAM_CHAT_ID} \
-                        -d text='${message}' \
-                        -H 'Jenkins-Crumb:${csrfToken}'
-                    """
-                } else {
-                    echo "未能獲取 CSRF token，無法發送消息到 Telegram"
-                }
+                // 直接發送失敗消息到 Telegram (不使用 CSRF Token)
+                bat """
+                    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+                    -d chat_id=${TELEGRAM_CHAT_ID} \
+                    -d text='${message}'
+                """
             }
-        }
-    }
-}
+      
