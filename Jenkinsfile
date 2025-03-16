@@ -27,8 +27,11 @@ pipeline {
                     // 檢查 Python 是否可用
                     bat 'python --version'
 
+                    // 創建虛擬環境
                     bat 'python -m venv ${PYTHON_ENV}'
                     bat 'call ${PYTHON_ENV}\\Scripts\\activate && pip install --upgrade pip'
+
+                    // 安裝所需的 Python 依賴
                     bat 'call ${PYTHON_ENV}\\Scripts\\activate && pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager'
                 }
             }
@@ -37,6 +40,7 @@ pipeline {
         stage('Run Robot Tests') {
             steps {
                 script {
+                    // 執行 Robot 測試
                     bat 'call ${PYTHON_ENV}\\Scripts\\activate && robot -d results tests/'
                 }
             }
@@ -45,6 +49,7 @@ pipeline {
         stage('Publish Results') {
             steps {
                 script {
+                    // 發佈 HTML 測試報告
                     publishHTML(target: [
                         reportDir: 'results', 
                         reportFiles: 'log.html', 
@@ -57,6 +62,7 @@ pipeline {
 
     post {
         always {
+            // 儲存測試結果
             archiveArtifacts artifacts: 'results/*', fingerprint: true
         }
         success {
