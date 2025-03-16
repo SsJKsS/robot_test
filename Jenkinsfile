@@ -68,7 +68,7 @@ pipeline {
             steps {
                 script {
                     // 執行 Robot 測試
-                    bat 'call %PYTHON_ENV%\\Scripts\\activate && robot -d results tests/'
+                    bat 'call %PYTHON_ENV%\\Scripts\\activate && robot -d results .'
                 }
             }
         }
