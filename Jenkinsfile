@@ -21,7 +21,7 @@ pipeline {
             }
         }
 
-        stage('Setup Python and Dependencies') {
+        stage('Setup Python and Create Virtual Environment') {
             steps {
                 script {
                     // 檢查 Python 是否可用
@@ -32,10 +32,34 @@ pipeline {
 
                     // 創建虛擬環境
                     bat 'python -m venv %PYTHON_ENV%'
-                    bat 'call %PYTHON_ENV%\\Scripts\\activate && pip install --upgrade pip'
+                }
+            }
+        }
 
+        stage('Upgrade pip') {
+            steps {
+                script {
+                    // 升級 pip
+                    echo "升級 pip..."
+                    bat """
+                        call %PYTHON_ENV%\\Scripts\\activate
+                        python -m pip install --upgrade pip
+                    """
+                    
+                    // 確保 pip 已升級
+                    bat 'call %PYTHON_ENV%\\Scripts\\activate && pip --version'
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
                     // 安裝所需的 Python 依賴
-                    bat 'call %PYTHON_ENV%\\Scripts\\activate && pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager'
+                    bat """
+                        call %PYTHON_ENV%\\Scripts\\activate
+                        pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager
+                    """
                 }
             }
         }
