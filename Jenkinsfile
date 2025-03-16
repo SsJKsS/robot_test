@@ -10,16 +10,16 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://your-repo-url.git'
+                git 'https://github.com/SsJKsS/robot_test.git'
             }
         }
 
         stage('Setup Python and Dependencies') {
             steps {
                 script {
-                    sh 'python -m venv ${PYTHON_ENV}'
-                    sh 'source ${PYTHON_ENV}/bin/activate && pip install --upgrade pip'
-                    sh 'source ${PYTHON_ENV}/bin/activate && pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager'
+                    bat 'python -m venv ${PYTHON_ENV}'
+                    bat 'call ${PYTHON_ENV}\\Scripts\\activate && pip install --upgrade pip'
+                    bat 'call ${PYTHON_ENV}\\Scripts\\activate && pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager'
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
         stage('Run Robot Tests') {
             steps {
                 script {
-                    sh 'source ${PYTHON_ENV}/bin/activate && robot -d results tests/'
+                    bat 'call ${PYTHON_ENV}\\Scripts\\activate && robot -d results tests/'
                 }
             }
         }
@@ -35,8 +35,11 @@ pipeline {
         stage('Publish Results') {
             steps {
                 script {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-                                 reportDir: 'results', reportFiles: 'log.html', reportName: 'Robot Test Report'])
+                    publishHTML(target: [
+                        reportDir: 'results', 
+                        reportFiles: 'log.html', 
+                        reportName: 'Robot Test Report'
+                    ])
                 }
             }
         }
@@ -49,13 +52,13 @@ pipeline {
         success {
             script {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
-                sh "curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d text='${message}'"
+                bat "curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d text='${message}'"
             }
         }
         failure {
             script {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
-                sh "curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d text='${message}'"
+                bat "curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d text='${message}'"
             }
         }
     }
