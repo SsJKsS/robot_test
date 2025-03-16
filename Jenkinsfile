@@ -24,6 +24,9 @@ pipeline {
         stage('Setup Python and Dependencies') {
             steps {
                 script {
+                    // 檢查 Python 是否可用
+                    bat 'python --version'
+
                     bat 'python -m venv ${PYTHON_ENV}'
                     bat 'call ${PYTHON_ENV}\\Scripts\\activate && pip install --upgrade pip'
                     bat 'call ${PYTHON_ENV}\\Scripts\\activate && pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager'
@@ -61,7 +64,7 @@ pipeline {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
                 
                 // 取得 Jenkins CSRF token
-                def crumb = sh(script: "curl -s -u ${env.JENKINS_USER}:${env.JENKINS_API_TOKEN} ${env.JENKINS_URL}/crumbIssuer/api/xml", returnStdout: true).trim()
+                def crumb = bat(script: "curl -s -u ${env.JENKINS_USER}:${env.JENKINS_API_TOKEN} ${env.JENKINS_URL}/crumbIssuer/api/xml", returnStdout: true).trim()
                 def csrfToken = crumb.split('<crumb>')[1].split('</crumb>')[0]
 
                 // 發送成功消息到 Telegram
@@ -73,7 +76,7 @@ pipeline {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
 
                 // 取得 Jenkins CSRF token
-                def crumb = sh(script: "curl -s -u ${env.JENKINS_USER}:${env.JENKINS_API_TOKEN} ${env.JENKINS_URL}/crumbIssuer/api/xml", returnStdout: true).trim()
+                def crumb = bat(script: "curl -s -u ${env.JENKINS_USER}:${env.JENKINS_API_TOKEN} ${env.JENKINS_URL}/crumbIssuer/api/xml", returnStdout: true).trim()
                 def csrfToken = crumb.split('<crumb>')[1].split('</crumb>')[0]
 
                 // 發送失敗消息到 Telegram
