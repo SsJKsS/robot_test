@@ -94,7 +94,12 @@ pipeline {
         }
         success {
             script {
-                def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
+                // 取得當前建構編號和狀態
+                def buildNumber = env.BUILD_NUMBER
+                def buildStatus = "SUCCESS"
+                
+                // 生成成功訊息，包含測試報告的 URL、建構編號和建構狀態
+                def message = "Test Pass！\nBuild Status: ${buildStatus}\nBuild Number: ${buildNumber}\n📌 Robot Report: ${env.BUILD_URL}artifact/results/report.html"
 
                 // 直接發送訊息到 Telegram，不進行 URL 編碼
                 bat """
@@ -107,7 +112,12 @@ pipeline {
         }
         failure {
             script {
-                def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
+                // 取得當前建構編號和狀態
+                def buildNumber = env.BUILD_NUMBER
+                def buildStatus = "FAILURE"
+                
+                // 生成失敗訊息，包含測試報告的 URL、建構編號和建構狀態
+                def message = "Test Fail\nBuild Status: ${buildStatus}\nBuild Number: ${buildNumber}\n📌 Report: ${env.BUILD_URL}artifact/results/report.html"
 
                 // 直接發送訊息到 Telegram，不進行 URL 編碼
                 bat """
