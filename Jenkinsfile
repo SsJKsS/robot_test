@@ -87,9 +87,13 @@ def sendTelegramMessage(String message) {
     try {
         bat """
             chcp 65001 > nul
-            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" ^
-            --header "Content-Type: application/json" ^
-            --data "{\\"chat_id\\":\\"${TELEGRAM_CHAT_ID}\\", \\"text\\":\\"${message}\\", \\"parse_mode\\":\\"Markdown\\"}"
+            set PYTHONIOENCODING=utf-8
+            powershell -Command "& {
+                \$message = '${message.replace('\n', '\n')}'
+                \$uri = 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage'
+                \$body = @{ chat_id='${TELEGRAM_CHAT_ID}'; text=\$message; parse_mode='Markdown' } | ConvertTo-Json -Compress
+                Invoke-RestMethod -Uri \$uri -Method Post -Body \$body -ContentType 'application/json' -Encoding UTF8
+            }"
         """
     } catch (Exception e) {
         echo "❌ 發送 Telegram 訊息失敗: ${e.message}"
