@@ -3,61 +3,38 @@ pipeline {
 
     environment {
         PYTHON_ENV = "${WORKSPACE}/venv"
-        TELEGRAM_BOT_TOKEN = "7597395246:AAEwY29V9_Vcdi-I4Odu9pNGRQfkK3yVvQY"
-        TELEGRAM_CHAT_ID = "7401334685"   // 你的 Chat ID
+        RESULTS_DIR = "${WORKSPACE}/results"
+        TELEGRAM_BOT_TOKEN = credentials('TELEGRAM_BOT_TOKEN')  // 從 Jenkins Credentials 設定
+        TELEGRAM_CHAT_ID = "7401334685"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
+                checkout scm
+            }
+        }
+
+        stage('Setup Python Environment') {
+            steps {
                 script {
-                    // 確保檢出的是 'main' 分支
-                    checkout scm: [
-                        $class: 'GitSCM',
-                        branches: [[name: 'refs/heads/main']], // 確保分支名稱為 'main'
-                        userRemoteConfigs: [[url: 'https://github.com/SsJKsS/robot_test.git']]
-                    ]
+                    bat '''
+                        chcp 65001 > nul  // 設定 cmd 為 UTF-8
+                        python --version
+                        echo 正在建立虛擬環境...
+                        python -m venv "%PYTHON_ENV%"
+                    '''
                 }
             }
         }
 
-        stage('Setup Python and Create Virtual Environment') {
+        stage('Upgrade pip and Install Dependencies') {
             steps {
                 script {
-                    // 檢查 Python 是否可用
-                    bat 'python --version'
-
-                    // 顯示 PYTHON_ENV 變數
-                    bat 'echo %PYTHON_ENV%'
-
-                    // 創建虛擬環境
-                    bat 'python -m venv %PYTHON_ENV%'
-                }
-            }
-        }
-
-        stage('Upgrade pip') {
-            steps {
-                script {
-                    // 升級 pip
-                    echo "升級 pip..."
                     bat """
-                        call %PYTHON_ENV%\\Scripts\\activate
+                        chcp 65001 > nul
+                        call "%PYTHON_ENV%\\Scripts\\activate"
                         python -m pip install --upgrade pip
-                    """
-                    
-                    // 確保 pip 已升級
-                    bat 'call %PYTHON_ENV%\\Scripts\\activate && pip --version'
-                }
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    // 安裝所需的 Python 依賴
-                    bat """
-                        call %PYTHON_ENV%\\Scripts\\activate
                         pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager
                     """
                 }
@@ -67,54 +44,55 @@ pipeline {
         stage('Run Robot Tests') {
             steps {
                 script {
-                    // 執行 Robot 測試
-                    bat 'call %PYTHON_ENV%\\Scripts\\activate && robot -d results .'
+                    bat """
+                        chcp 65001 > nul
+                        call "%PYTHON_ENV%\\Scripts\\activate"
+                        set PYTHONIOENCODING=utf-8
+                        robot --outputdir "%RESULTS_DIR%" --loglevel DEBUG .
+                    """
                 }
             }
         }
 
         stage('Publish Results') {
             steps {
-                script {
-                    // 發佈 HTML 測試報告
-                    publishHTML(target: [
-                        reportDir: 'results', 
-                        reportFiles: 'log.html', 
-                        reportName: 'Robot Test Report'
-                    ])
-                }
+                publishHTML(target: [
+                    reportDir: 'results', 
+                    reportFiles: 'log.html', 
+                    reportName: 'Robot Test Report'
+                ])
             }
         }
     }
 
     post {
         always {
-            // 儲存測試結果
             archiveArtifacts artifacts: 'results/*', fingerprint: true
         }
+
         success {
             script {
-                def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
-
-                // 直接發送成功消息到 Telegram (不使用 CSRF)
-                bat """
-                    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-                    -d chat_id=${TELEGRAM_CHAT_ID} \
-                    -d text='${message}'
-                """
+                sendTelegramMessage("✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}")
             }
         }
+
         failure {
             script {
-                def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
-
-                // 直接發送失敗消息到 Telegram (不使用 CSRF)
-                bat """
-                    curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-                    -d chat_id=${TELEGRAM_CHAT_ID} \
-                    -d text='${message}'
-                """
+                sendTelegramMessage("❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}")
             }
         }
+    }
+}
+
+def sendTelegramMessage(String message) {
+    try {
+        bat """
+            chcp 65001 > nul
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" ^
+            --header "Content-Type: application/json" ^
+            --data "{\\"chat_id\\":\\"${TELEGRAM_CHAT_ID}\\", \\"text\\":\\"${message}\\", \\"parse_mode\\":\\"Markdown\\"}"
+        """
+    } catch (Exception e) {
+        echo "❌ 發送 Telegram 訊息失敗: ${e.message}"
     }
 }
