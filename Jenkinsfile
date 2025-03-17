@@ -4,7 +4,7 @@ pipeline {
     environment {
         PYTHON_ENV = "${WORKSPACE}/venv"
         RESULTS_DIR = "${WORKSPACE}/results"
-        TELEGRAM_BOT_TOKEN = credentials('TELEGRAM_BOT_TOKEN')  // 從 Jenkins Credentials 設定
+        TELEGRAM_BOT_TOKEN = credentials('TELEGRAM_BOT_TOKEN')  // 讀取 Jenkins Credentials
         TELEGRAM_CHAT_ID = "7401334685"
     }
 
@@ -19,9 +19,8 @@ pipeline {
             steps {
                 script {
                     bat '''
-                        chcp 65001 > nul  // 設定 cmd 為 UTF-8
+                        chcp 65001 > nul
                         python --version
-                        echo 正在建立虛擬環境...
                         python -m venv "%PYTHON_ENV%"
                     '''
                 }
@@ -67,7 +66,9 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'results/*', fingerprint: true
+            node {  // 確保 `archiveArtifacts` 在 `node` 內
+                archiveArtifacts artifacts: 'results/*', fingerprint: true
+            }
         }
 
         success {
