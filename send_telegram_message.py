@@ -38,5 +38,5 @@ def send_telegram_message(message):
 
 # 呼叫函數並傳入必要的參數
 if __name__ == "__main__":
-    message = "✅ Robot Framework 測試成功！\n📌"
+    message = "✅ Robot Framework 測試成功！"
     send_telegram_message(message)
