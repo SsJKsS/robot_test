@@ -11,10 +11,9 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    // 確保檢出的是 'main' 分支
                     checkout scm: [
                         $class: 'GitSCM',
-                        branches: [[name: 'refs/heads/main']], // 確保分支名稱為 'main'
+                        branches: [[name: 'refs/heads/main']], 
                         userRemoteConfigs: [[url: 'https://github.com/SsJKsS/robot_test.git']]
                     ]
                 }
@@ -24,13 +23,8 @@ pipeline {
         stage('Setup Python and Create Virtual Environment') {
             steps {
                 script {
-                    // 檢查 Python 是否可用
                     bat 'python --version'
-
-                    // 顯示 PYTHON_ENV 變數
                     bat 'echo %PYTHON_ENV%'
-
-                    // 創建虛擬環境
                     bat 'python -m venv %PYTHON_ENV%'
                 }
             }
@@ -39,14 +33,11 @@ pipeline {
         stage('Upgrade pip') {
             steps {
                 script {
-                    // 升級 pip
                     echo "升級 pip..."
                     bat """
                         call %PYTHON_ENV%\\Scripts\\activate
                         python -m pip install --upgrade pip
                     """
-                    
-                    // 確保 pip 已升級
                     bat 'call %PYTHON_ENV%\\Scripts\\activate && pip --version'
                 }
             }
@@ -55,7 +46,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // 安裝所需的 Python 依賴
                     bat """
                         call %PYTHON_ENV%\\Scripts\\activate
                         pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager
@@ -67,7 +57,6 @@ pipeline {
         stage('Run Robot Tests') {
             steps {
                 script {
-                    // 執行 Robot 測試
                     bat 'call %PYTHON_ENV%\\Scripts\\activate && robot -d results .'
                 }
             }
@@ -76,7 +65,6 @@ pipeline {
         stage('Publish Results') {
             steps {
                 script {
-                    // 發佈 HTML 測試報告
                     publishHTML(target: [
                         reportDir: 'results', 
                         reportFiles: 'log.html', 
@@ -89,22 +77,17 @@ pipeline {
 
     post {
         always {
-            // 儲存測試結果
             archiveArtifacts artifacts: 'results/*', fingerprint: true
         }
         success {
             script {
                 def message = "✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}"
-
-                // 使用 sendTelegramMessage 發送成功消息
                 sendTelegramMessage(message)
             }
         }
         failure {
             script {
                 def message = "❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}"
-
-                // 使用 sendTelegramMessage 發送失敗消息
                 sendTelegramMessage(message)
             }
         }
@@ -117,7 +100,7 @@ def sendTelegramMessage(String message) {
             chcp 65001 > nul
             set PYTHONIOENCODING=utf-8
             powershell -Command "& {
-                \$message = '${message.replace('\n', '\n')}' 
+                \$message = '${message.replace('\n', '\n')}'
                 Invoke-RestMethod -Uri 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage' `
                 -Method Post -Body (@{ chat_id='${TELEGRAM_CHAT_ID}'; text=\$message; parse_mode='Markdown' } | ConvertTo-Json -Compress) `
                 -ContentType 'application/json'
