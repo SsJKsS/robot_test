@@ -75,7 +75,7 @@ pipeline {
                 bat """
                     chcp 65001 > nul
                     call "%PYTHON_ENV%\\Scripts\\activate.bat"
-                    python send_telegram_message.py "Robot Framework tests passed successfully!" "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\selenium\\results\\log.html"
+                    python send_telegram_message.py "✅Robot Framework tests passed successfully!✅" "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\selenium\\results\\log.html"
                 """
             }
         }
@@ -85,7 +85,7 @@ pipeline {
                 bat """
                     chcp 65001 > nul
                     call "%PYTHON_ENV%\\Scripts\\activate.bat"
-                    python send_telegram_message.py "Robot Framework tests failed. Please check the logs." "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\selenium\\results\\log.html"
+                    python send_telegram_message.py "❌Robot Framework tests failed. Please check the logs.❌" "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\selenium\\results\\log.html"
                 """
             }
         }
