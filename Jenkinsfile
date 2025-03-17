@@ -35,6 +35,7 @@ pipeline {
                         call "%PYTHON_ENV%\\Scripts\\activate"
                         python -m pip install --upgrade pip
                         pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager
+                        pip install requests
                     """
                 }
             }
