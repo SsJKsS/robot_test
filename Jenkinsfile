@@ -32,7 +32,7 @@ pipeline {
                 script {
                     bat """
                         chcp 65001 > nul
-                        call "%PYTHON_ENV%\\Scripts\\activate"
+                        call "%PYTHON_ENV%\\Scripts\\activate.bat"
                         python -m pip install --upgrade pip
                         pip install robotframework robotframework-seleniumlibrary selenium webdriver-manager
                         pip install requests
@@ -46,7 +46,7 @@ pipeline {
                 script {
                     bat """
                         chcp 65001 > nul
-                        call "%PYTHON_ENV%\\Scripts\\activate"
+                        call "%PYTHON_ENV%\\Scripts\\activate.bat"
                         set PYTHONIOENCODING=utf-8
                         robot --outputdir "%RESULTS_DIR%" --loglevel DEBUG .
                     """
@@ -74,6 +74,7 @@ pipeline {
             script {
                 bat """
                     chcp 65001 > nul
+                    call "%PYTHON_ENV%\\Scripts\\activate.bat"
                     python send_telegram_message.py
                 """
             }
@@ -83,6 +84,7 @@ pipeline {
             script {
                 bat """
                     chcp 65001 > nul
+                    call "%PYTHON_ENV%\\Scripts\\activate.bat"
                     python send_telegram_message.py
                 """
             }
