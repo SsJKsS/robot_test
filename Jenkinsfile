@@ -66,9 +66,7 @@ pipeline {
 
     post {
         always {
-            node {  // 確保 `archiveArtifacts` 在 `node` 內
-                archiveArtifacts artifacts: 'results/*', fingerprint: true
-            }
+            archiveArtifacts artifacts: 'results/*', fingerprint: true  // ✅ 直接使用，不用 `node {}`
         }
 
         success {
