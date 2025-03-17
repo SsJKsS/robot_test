@@ -1,6 +1,9 @@
 import os
 import requests
 import json
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def send_telegram_message(message):
     try:
