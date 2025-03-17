@@ -66,18 +66,24 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'results/*', fingerprint: true  // ✅ 直接使用，不用 `node {}`
+            archiveArtifacts artifacts: 'results/*', fingerprint: true  // ✅ 直接使用，不用 `node {}` 
         }
 
         success {
             script {
-                sendTelegramMessage("✅ Robot Framework 測試成功！\n📌 Jenkins 報告: ${env.BUILD_URL}")
+                bat """
+                    chcp 65001 > nul
+                    python send_telegram_message.py
+                """
             }
         }
 
         failure {
             script {
-                sendTelegramMessage("❌ Robot Framework 測試失敗！\n📌 Jenkins 報告: ${env.BUILD_URL}")
+                bat """
+                    chcp 65001 > nul
+                    python send_telegram_message.py
+                """
             }
         }
     }
