@@ -2,9 +2,6 @@ import sys
 import requests
 import os
 
-# 設定 Python 預設編碼為 UTF-8
-sys.setdefaultencoding('utf-8')
-
 def send_telegram_message(bot_token, chat_id, message, file_path=None):
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     
