@@ -85,15 +85,15 @@ pipeline {
 
 def sendTelegramMessage(String message) {
     try {
-        bat """
-            chcp 65001 > nul
-            set PYTHONIOENCODING=utf-8
-            powershell -Command "& {
-                \$message = '${message.replace('\n', '\n')}'
-                \$uri = 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage'
-                \$body = @{ chat_id='${TELEGRAM_CHAT_ID}'; text=\$message; parse_mode='Markdown' } | ConvertTo-Json -Compress
-                Invoke-RestMethod -Uri \$uri -Method Post -Body \$body -ContentType 'application/json' -Encoding UTF8
-            }"
+        powershell """
+            \$message = '${message}'
+            \$uri = 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage'
+            \$body = @{
+                chat_id = '${TELEGRAM_CHAT_ID}'
+                text = \$message
+                parse_mode = 'Markdown'
+            } | ConvertTo-Json -Compress
+            Invoke-RestMethod -Uri \$uri -Method Post -ContentType 'application/json' -Body \$body
         """
     } catch (Exception e) {
         echo "❌ 發送 Telegram 訊息失敗: ${e.message}"
