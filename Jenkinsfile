@@ -89,22 +89,3 @@ pipeline {
         }
     }
 }
-
-def sendTelegramMessage(String message) {
-    try {
-        powershell """
-            \$message = '${message}'
-            \$uri = 'https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage'
-            \$body = @{
-                chat_id = '${TELEGRAM_CHAT_ID}'
-                text = \$message
-                parse_mode = 'Markdown'
-            } | ConvertTo-Json -Compress
-            # 設置字符編碼為 UTF-8
-            [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::UTF8.GetBytes(\$body)) 
-            Invoke-RestMethod -Uri \$uri -Method Post -ContentType 'application/json' -Body \$body
-        """
-    } catch (Exception e) {
-        echo "❌ 發送 Telegram 訊息失敗: ${e.message}"
-    }
-}
